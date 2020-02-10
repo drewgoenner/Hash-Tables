@@ -1,3 +1,5 @@
+
+import hashlib
 # '''
 # Linked List hash table key/value pair
 # '''
@@ -51,7 +53,17 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # Find the index of the key
+        index = self._hash_mod(key)
+        # If collision, print error
+        if self.storage[index]:
+            print("ERROR: collision")
+            return
+        # If empty, create and add a new entry
+        else:
+            self.storage[index] = LinkedPair( key, value )
+        
+            
 
 
 
@@ -62,8 +74,20 @@ class HashTable:
         Print a warning if the key is not found.
 
         Fill this in.
+
         '''
-        pass
+        index = self._hash_mod(key)
+        #If key not found, print warning
+
+        if not self.storage[index]:
+            print("ERROR: No key found")
+            return
+        
+        else:
+            self.storage[index] = None
+
+
+        
 
 
     def retrieve(self, key):
