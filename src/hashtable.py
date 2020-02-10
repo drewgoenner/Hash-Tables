@@ -62,7 +62,7 @@ class HashTable:
         # If empty, create and add a new entry
         else:
             self.storage[index] = LinkedPair( key, value )
-            
+
         
             
 
@@ -110,8 +110,7 @@ class HashTable:
         else:
             if self.storage[index].key == key:
                 return self.storage[index].value
-            else:
-                print("ERROR: Keys don't match")
+
                 
 
 
