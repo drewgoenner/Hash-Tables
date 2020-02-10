@@ -62,6 +62,7 @@ class HashTable:
         # If empty, create and add a new entry
         else:
             self.storage[index] = LinkedPair( key, value )
+            
         
             
 
@@ -82,9 +83,12 @@ class HashTable:
         if not self.storage[index]:
             print("ERROR: No key found")
             return
-        
+        elif not self.storage[index].value:
+            print("ERROR: Nothing to delete")
         else:
-            self.storage[index] = None
+            del(self.storage[index].value)
+            return
+            
 
 
         
@@ -98,7 +102,17 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+
+        if not self.storage[index]:
+            return None
+
+        else:
+            if self.storage[index].key == key:
+                return self.storage[index].value
+            else:
+                print("ERROR: Keys don't match")
+                
 
 
     def resize(self):
@@ -108,7 +122,18 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        #double capacity
+        self.capacity *= 2
+        #create new_storage and set to new doubled capacity
+        new_storage = [None] * self.capacity
+
+        #for each item in stoarage, has the key and add the pair to new storage
+        for item in self.storage:
+            if item:
+                new_index = self._hash_mod(item.key)
+                new_storage[new_index] = LinkedPair(item.key, item.value)
+        #set storage to new_storage
+        self.storage = new_storage
 
 
 
