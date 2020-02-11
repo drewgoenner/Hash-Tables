@@ -17,6 +17,8 @@ class HashTable:
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
+        self.count = 0
+        self.size = 0
 
 
     def _hash(self, key):
@@ -53,15 +55,30 @@ class HashTable:
 
         Fill this in.
         '''
-        # Find the index of the key
+        # if capacity is full, resize
+        if self.size == self.capacity:
+            self.resize()
+        # set the hashed key to a variable
         index = self._hash_mod(key)
-        # If collision, print error
+        
+        # if index, node = that index
         if self.storage[index]:
-            print("ERROR: collision")
-            return
-        # If empty, create and add a new entry
+            node = self.storage[index]
+        # while there is a next node and the node's key isn't the specified key, move to the next
+            while node.next and node.key is not key:
+                node = node.next
+        # if the node's key is the specified key, set the node's value to specified value
+            if node.key == key:
+                node.value = value
+        # if it the key doesn't exist, add a linked pair to the next node and increase count by 1
+            else:
+                node.next = LinkedPair( key, value)
+                self.count += 1
+        # otherwise add the linked pair to the indexed location and increase count by one
         else:
             self.storage[index] = LinkedPair( key, value )
+            self.count += 1
+        
 
         
             
@@ -77,17 +94,37 @@ class HashTable:
         Fill this in.
 
         '''
+        #hash the key
         index = self._hash_mod(key)
-        #If key not found, print warning
 
+        #if there is no key, print error and return
         if not self.storage[index]:
-            print("ERROR: No key found")
+            print("ERROR: No key found!")
             return
-        elif not self.storage[index].value:
-            print("ERROR: Nothing to delete")
-        else:
-            del(self.storage[index].value)
-            return
+        
+        #if there is, set that to variable node
+        if self.storage[index]:
+            node = self.storage[index]
+        #if the node's key is the same as the specified key, if there's a next node, set index to that otherwise set it to none
+            if node.key == key:
+                if node.next:
+                    self.storage[index] = node.next
+                else:
+                    self.storage[index] = None
+
+        #while there is a next node, set variable of next_node to the following node
+            while node.next:
+                next_node = node.next
+        # if the next_node's key is the specified key, do the same as above
+                if next_node.key == key:
+                    if next_node.next:
+                        node.next = next_node.next
+                    else:
+                        node.next = None
+                node = next_node
+
+        self.count -= 1
+
             
 
 
@@ -102,14 +139,24 @@ class HashTable:
 
         Fill this in.
         '''
+        #hash key
         index = self._hash_mod(key)
 
-        if not self.storage[index]:
+        # set node to the stored key
+        if self.storage[index]:
+            node = self.storage[index]
+        #while the stored key isn't the specified key and there is another node to look at, move on
+            while node.key != key and node.next:
+                node = node.next
+        # if the node's key is the specified key, return the value, otherwise return none
+            if node.key == key:
+                return node.value
+            else:
+                return None
+        else:
             return None
 
-        else:
-            if self.storage[index].key == key:
-                return self.storage[index].value
+        
 
                 
 
@@ -122,17 +169,17 @@ class HashTable:
         Fill this in.
         '''
         #double capacity
-        self.capacity *= 2
-        #create new_storage and set to new doubled capacity
-        new_storage = [None] * self.capacity
+        self.capacity = int(self.capacity * 2)
+        #create new_storage and create a hashtable with current capacity
+        new_storage = HashTable(self.capacity)
 
-        #for each item in stoarage, has the key and add the pair to new storage
+        #for each item in stoarage, add item.key and item.value to new_storage
         for item in self.storage:
-            if item:
-                new_index = self._hash_mod(item.key)
-                new_storage[new_index] = LinkedPair(item.key, item.value)
-        #set storage to new_storage
-        self.storage = new_storage
+            while item:
+                new_storage.insert(item.key, item.value)
+                item = item.next
+
+        self.storage = new_storage.storage
 
 
 
